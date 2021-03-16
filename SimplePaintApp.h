@@ -62,6 +62,7 @@
 		var posx;
 		var posy;
 		var isMove=false;
+		var selectedRect=0;
 		
 
 		function clearCanvas(){
@@ -70,7 +71,6 @@
     		ctx.clearRect(0, 0, canvas.width, canvas.height);
     		rectArray.length=0;
     		objCount=0;
-    		console.log(rectArray.length);
 
 		}
 
@@ -98,27 +98,28 @@
 
 		});
 		function rectMove(cpox,cpoy,cx,cy){
-		
+			var isThisRect=false;
 			if(objCount==0){
 				isDrag=true;
-			}
-			else if(isRSelected(cpox,cpoy)){
-					
-					posx=cx-rectArray[objCount-1].x;
-					posy=cy-rectArray[objCount-1].y;
-					isMove=true;
-				}else{
-					isDrag=true;
+			}else {
+				for(j=0;j<rectArray.length;j++){
+					if(isRectSelected(cpox,cpoy,rectArray[j])){
+						selectedRect=j;
+						isMove=true;
+						isDrag=false;
+						isThisRect=true;
+					}else{
+						isDrag=true;
+					}
+					if(isThisRect){
+						rectArray.push(rectArray.splice(selectedRect,1)[0]);
+						isThisRect=false;
+						posx=cx-rectArray[objCount-1].x;
+						posy=cy-rectArray[objCount-1].y;
+					}
 				}
-
-		}
-		
-		function isRSelected(xmouse, ymouse){
-			if(xmouse<rectArray[objCount-1].x||ymouse<rectArray[objCount-1].y||xmouse>rectArray[objCount-1].x+width||ymouse>rectArray[objCount-1].y+height){
-				return false
-			}else{
-				return true;
 			}
+
 		}
 		myPics.addEventListener('mousemove', e=>{
 			if(indicate){
